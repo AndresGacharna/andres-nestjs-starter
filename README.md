@@ -16,10 +16,10 @@ Lo que viene listo:
 
 ```bash
 # Opción A: como template de GitHub (una vez que este repo esté marcado como template)
-gh repo create mi-api-nueva --template <tu-usuario>/andres-nestjs-starter --private --clone
+gh repo create mi-api-nueva --template AndresGacharna/andres-nestjs-starter --private --clone
 
 # Opción B: copia sin historial
-npx degit <tu-usuario>/andres-nestjs-starter mi-api-nueva
+npx degit AndresGacharna/andres-nestjs-starter mi-api-nueva
 cd mi-api-nueva && git init && git add -A && git commit -m "chore: initial commit from starter"
 ```
 
@@ -112,7 +112,7 @@ Dos skills, con orígenes y tratamientos distintos:
 
 **`andres-nestjs-architecture`** — propia, MIT, versionada en `.claude/skills/` para que la plantilla funcione recién clonada. Las convenciones de este repo más una plantilla completa de módulo en `references/module-template.md`.
 
-Su repo canónico es [`andres-agent-skills`](https://github.com/<tu-usuario>/andres-agent-skills), pensado para consumirla desde cualquier runtime de agentes (Claude Code, Codex, Antigravity, …). Si corriges una convención, corrígela allá y sincroniza la copia de aquí.
+Su repo canónico es [`andres-nest-agent-skills`](https://github.com/AndresGacharna/andres-nest-agent-skills), pensado para consumirla desde cualquier runtime de agentes (Claude Code, Codex, Antigravity, …). Si corriges una convención, corrígela allá y sincroniza la copia de aquí.
 
 **`nestjs-best-practices`** — de terceros: [`kadajett/agent-nestjs-skills`](https://github.com/kadajett/agent-nestjs-skills). **No se redistribuye en este repo**, porque ese proyecto no declara licencia y sin licencia el default es *todos los derechos reservados*. `skills-lock.json` guarda el origen, la ruta y el hash; instálala tú si la quieres:
 
