@@ -1,0 +1,6 @@
+# Los tests e2e viven aquí: test/**/*.e2e-spec.ts (ver vitest.config.e2e.ts).
+# Git no versiona carpetas vacías; este archivo mantiene la carpeta en el repo.
+#
+# Al escribir el primero: Vitest transpila sin emitir metadatos de decoradores,
+# así que para usar Test.createTestingModule con inyección por constructor hace
+# falta el plugin unplugin-swc.
