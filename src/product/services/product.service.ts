@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { DomainException } from '../../common/exceptions/domain.exception.js';
-import { ProductErrors } from '../constants/product.errors.js';
+import { ProductExceptionResponse } from '../constants/product.exception-response.js';
 import { CreateProductDto } from '../dto/create-product.dto.js';
 import { UpdateProductDto } from '../dto/update-product.dto.js';
 import { Product } from '../entities/product.entity.js';
@@ -24,7 +24,10 @@ export class ProductService {
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository.findOneBy({ id });
     if (!product) {
-      throw new DomainException(ProductErrors.NOT_FOUND);
+      throw new DomainException(
+        HttpStatus.NOT_FOUND,
+        ProductExceptionResponse.NOT_FOUND,
+      );
     }
     return product;
   }
@@ -39,7 +42,10 @@ export class ProductService {
   async update(id: string, dto: UpdateProductDto): Promise<Product> {
     const product = await this.productRepository.preload({ id, ...dto });
     if (!product) {
-      throw new DomainException(ProductErrors.NOT_FOUND);
+      throw new DomainException(
+        HttpStatus.NOT_FOUND,
+        ProductExceptionResponse.NOT_FOUND,
+      );
     }
     return this.productRepository.save(product);
   }
@@ -47,7 +53,10 @@ export class ProductService {
   async remove(id: string): Promise<void> {
     const { affected } = await this.productRepository.delete(id);
     if (!affected) {
-      throw new DomainException(ProductErrors.NOT_FOUND);
+      throw new DomainException(
+        HttpStatus.NOT_FOUND,
+        ProductExceptionResponse.NOT_FOUND,
+      );
     }
   }
 
@@ -55,18 +64,24 @@ export class ProductService {
   async deactivate(id: string): Promise<Product> {
     const product = await this.findOne(id);
     if (!product.isActive) {
-      throw new DomainException(ProductErrors.ALREADY_INACTIVE);
+      throw new DomainException(
+        HttpStatus.CONFLICT,
+        ProductExceptionResponse.ALREADY_INACTIVE,
+      );
     }
     product.isActive = false;
     return this.productRepository.save(product);
   }
 
   // El índice único ya produce un 409 genérico (UNIQUE_VIOLATION) desde el
-  // filtro; validar antes le da al cliente un code propio del módulo.
+  // filtro; validar antes le da al cliente un mensaje propio del módulo.
   private async ensureSkuIsFree(sku: string): Promise<void> {
     const exists = await this.productRepository.existsBy({ sku });
     if (exists) {
-      throw new DomainException(ProductErrors.SKU_TAKEN);
+      throw new DomainException(
+        HttpStatus.CONFLICT,
+        ProductExceptionResponse.SKU_TAKEN,
+      );
     }
   }
 }

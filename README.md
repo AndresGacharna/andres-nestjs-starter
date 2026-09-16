@@ -5,7 +5,7 @@ Plantilla base para arrancar APIs con [NestJS](https://nestjs.com/) 12 (ESM), Ty
 Lo que viene listo:
 
 - **Contrato de respuestas único.** Las consultas devuelven el resultado tal cual; las acciones devuelven `{ message, data? }` sin que el controlador arme nada.
-- **Manejo de errores global.** `AllExceptionsFilter` con un formato único y `code` estable por error, incluidos los códigos de Postgres (duplicados y llaves foráneas → `409`).
+- **Manejo de errores global.** `AllExceptionsFilter` con un formato único, `DomainException(status, message)` con catálogos de mensajes por módulo, y los errores de Postgres traducidos (duplicados y llaves foráneas → `409`) sin filtrar detalles internos.
 - **Configuración validada al arrancar.** `EnvironmentVariables` + `validateEnv`: si falta una variable o el valor es inválido, la app no levanta y dice cuáles.
 - **Logging y serialización globales.** Sin `new Logger()` ni `ClassSerializerInterceptor` por controlador.
 - **Las convenciones como skill de agente**, para que el módulo 20 se escriba igual que el primero.
@@ -79,8 +79,8 @@ La plantilla no trae tests: `pnpm run test` no encuentra archivos hasta que escr
 | Endpoint | Qué demuestra |
 |---|---|
 | `GET /api/v1/products` | Consulta: resultado tal cual, sin mensaje |
-| `GET /api/v1/products/:id` | `404` con `code: PRODUCT_NOT_FOUND` si no existe |
-| `POST /api/v1/products` | Acción: `{ message, data }`. `409 PRODUCT_SKU_TAKEN` si el `sku` se repite |
+| `GET /api/v1/products/:id` | `404` con el mensaje de `ProductExceptionResponse.NOT_FOUND` si no existe |
+| `POST /api/v1/products` | Acción: `{ message, data }`. `409` con mensaje propio del módulo si el `sku` se repite |
 | `PATCH /api/v1/products/:id` | Acción con `PartialType` del DTO de creación |
 | `PATCH /api/v1/products/:id/deactivate` | Acción que no es CRUD + regla de negocio que lanza |
 | `DELETE /api/v1/products/:id` | Acción sin retorno: `200` con `{ message }` |
@@ -94,7 +94,7 @@ El campo `internalNotes` de la entidad lleva `@Exclude()`: nunca sale en las res
 | Consulta (`GET`, o `POST` de búsqueda) | El resultado tal cual: entidad, arreglo o `{ page, size, count, rows }` |
 | Acción que devuelve algo | `{ "message": "...", "data": ... }` |
 | Acción que no devuelve nada | `{ "message": "..." }` |
-| Error | `{ "statusCode", "code", "message", "timestamp", "path" }` |
+| Error | `{ "statusCode", "message", "timestamp", "path" }` |
 
 ```bash
 # Acción → 201 { message, data }

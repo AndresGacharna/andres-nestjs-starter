@@ -6,7 +6,7 @@ export interface MessageResponse<T> {
 
 export interface ApiErrorResponse {
   statusCode: number;
-  code: string;
+  /** `string[]` when the error comes from `ValidationPipe`. */
   message: string | string[];
   /** Server time and route: let the client correlate a reported error with the logs. */
   timestamp: string;

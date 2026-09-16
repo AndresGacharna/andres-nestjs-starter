@@ -1,20 +1,25 @@
-import { HttpException } from '@nestjs/common';
-
-import type { ErrorDefinition } from '../interfaces/error-definition.interface.js';
+import {
+  HttpException,
+  type HttpExceptionOptions,
+  HttpStatus,
+} from '@nestjs/common';
 
 /**
- * Business rule violation. Takes an entry of an error catalog so the client
- * always gets a stable `code` to rely on instead of comparing messages.
+ * Business rule violation: the status plus the text the client shows.
+ * The message comes from the module catalog (`<feature>.exception-response.ts`) or, for a
+ * one-off or dynamic case, is written inline.
  *
  * @example
- * throw new DomainException(SupplierErrors.NOT_FOUND);
- * throw new DomainException(SupplierErrors.NOT_FOUND, `Supplier ${id} not found`);
+ * throw new DomainException(HttpStatus.NOT_FOUND, SupplierExceptionResponse.NOT_FOUND);
+ * throw new DomainException(HttpStatus.NOT_FOUND, `Supplier ${id} not found`);
+ * throw new DomainException(HttpStatus.BAD_GATEWAY, message, { cause: error });
  */
 export class DomainException extends HttpException {
-  readonly code: string;
-
-  constructor(error: ErrorDefinition, message: string = error.message) {
-    super({ code: error.code, message }, error.status);
-    this.code = error.code;
+  constructor(
+    statusCode: HttpStatus,
+    message: string,
+    options?: HttpExceptionOptions,
+  ) {
+    super(message, statusCode, options);
   }
 }

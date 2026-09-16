@@ -23,7 +23,7 @@
 - [ ] **Health checks** con `@nestjs/terminus` (`/health` con ping a la BD) para el orquestador.
 - [ ] **Seguridad HTTP:** `helmet` y `@nestjs/throttler` para limitar la tasa de peticiones.
 - [ ] **Logging estructurado** (pino) con un `requestId` por petición, enviado en un header de respuesta y en el body de los errores, para reemplazar la búsqueda por `timestamp` + `path`.
-- [ ] **Idioma de los mensajes.** Los catálogos de errores (`*.errors.ts`) y de éxito (`*.messages.ts`) están en inglés. Si el frontend los muestra tal cual, definir el idioma o que el frontend traduzca por `code`.
+- [ ] **Idioma de los mensajes.** Los catálogos de errores (`*.exception-response.ts`) y de éxito (`*.messages.ts`) están en inglés. Si el frontend los muestra tal cual, definir el idioma; como la respuesta de error no lleva `code`, el frontend decide por `statusCode`, no por el texto.
 
 ## Mantenimiento de la plantilla
 
