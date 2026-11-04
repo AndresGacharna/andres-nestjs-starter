@@ -1,23 +1,39 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+
+import { SafeText } from '../../common/decorators/safe-text.decorator.js';
+import { ProductCategoryEnum } from '../enums/product-category.enum.js';
 
 export class CreateProductDto {
-  @IsString()
+  @ApiProperty({ example: 'ABC-001', maxLength: 50 })
+  @SafeText(50)
   @IsNotEmpty()
-  @MaxLength(50)
   sku!: string;
 
-  @IsString()
+  @ApiProperty({ example: 'Football, size 5, white', maxLength: 120 })
+  @SafeText(120)
   @IsNotEmpty()
-  @MaxLength(120)
   name!: string;
 
-  @IsOptional()
-  @IsString()
-  @MaxLength(500)
-  description?: string;
+  @ApiProperty({
+    enum: ProductCategoryEnum,
+    example: ProductCategoryEnum.Equipment,
+  })
+  @IsEnum(ProductCategoryEnum)
+  category!: ProductCategoryEnum;
 
+  // `null` is valid here: it clears the description (nullable column)
+  @ApiPropertyOptional({
+    example: 'Machine-stitched',
+    maxLength: 500,
+    nullable: true,
+  })
   @IsOptional()
-  @IsString()
-  @MaxLength(500)
-  internalNotes?: string;
+  @SafeText(500)
+  description?: string | null;
+
+  @ApiPropertyOptional({ maxLength: 500, nullable: true })
+  @IsOptional()
+  @SafeText(500)
+  internalNotes?: string | null;
 }

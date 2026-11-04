@@ -74,16 +74,18 @@ La plantilla no trae tests: `pnpm run test` no encuentra archivos hasta que escr
 
 ## El módulo de ejemplo
 
-`src/product/` es un CRUD completo escrito con las convenciones de la skill. Sirve de referencia viva —compila y corre— y ejercita todo el contrato:
+`src/product/` es un CRUD completo escrito con las convenciones de la skill. Sirve de referencia viva —compila y corre— y ejercita todo el contrato. La documentación Swagger queda en `/api/docs` fuera de producción.
 
 | Endpoint | Qué demuestra |
 |---|---|
-| `GET /api/v1/products` | Consulta: resultado tal cual, sin mensaje |
-| `GET /api/v1/products/:id` | `404` con el mensaje de `ProductExceptionResponse.NOT_FOUND` si no existe |
-| `POST /api/v1/products` | Acción: `{ message, data }`. `409` con mensaje propio del módulo si el `sku` se repite |
-| `PATCH /api/v1/products/:id` | Acción con `PartialType` del DTO de creación |
-| `PATCH /api/v1/products/:id/deactivate` | Acción que no es CRUD + regla de negocio que lanza |
-| `DELETE /api/v1/products/:id` | Acción sin retorno: `200` con `{ message }` |
+| `GET /api/v1/product/getParams` | Consulta: las listas de los formularios (el enum de categorías vía su helper) |
+| `POST /api/v1/product/getAll` | Consulta por `POST` con `200`: `{ pagination, filter }` en el body y `{ page, size, count, rows }` de respuesta. `textFilter` con `@SafeText` y `escapeLike()` |
+| `POST /api/v1/product/create` | Acción: `{ message, data }`. `409` con mensaje dinámico del catálogo si el `sku` se repite |
+| `PUT /api/v1/product/update/:id` | `PartialType` de `@nestjs/swagger` con `skipNullProperties: false`: un `null` en un campo NOT NULL da `400`, no `500` |
+| `PUT /api/v1/product/deactivate/:id` | Acción que no es CRUD + regla de negocio que lanza |
+| `DELETE /api/v1/product/delete/:id` | Acción sin retorno: `200` con `{ message }` |
+
+No hay `getById`: una fila de `getAll` ya trae todo lo que necesita el formulario de edición.
 
 El campo `internalNotes` de la entidad lleva `@Exclude()`: nunca sale en las respuestas. Es la prueba de que el `ClassSerializerInterceptor` global está haciendo su trabajo.
 
@@ -98,12 +100,14 @@ El campo `internalNotes` de la entidad lleva `@Exclude()`: nunca sale en las res
 
 ```bash
 # Acción → 201 { message, data }
-curl -X POST http://localhost:3033/api/v1/products \
+curl -X POST http://localhost:3033/api/v1/product/create \
   -H 'Content-Type: application/json' \
-  -d '{"sku":"ABC-001","name":"Ejemplo"}'
+  -d '{"sku":"ABC-001","name":"Football, size 5","category":1}'
 
-# Consulta → 200, el arreglo tal cual
-curl http://localhost:3033/api/v1/products
+# Consulta por POST → 200, { page, size, count, rows }
+curl -X POST http://localhost:3033/api/v1/product/getAll \
+  -H 'Content-Type: application/json' \
+  -d '{"pagination":{"page":1,"size":10},"filter":{"textFilter":"ball"}}'
 ```
 
 ## Skills de agente
@@ -156,4 +160,4 @@ Además, `__dirname` y `__filename` no existen en ESM: usa `import.meta.dirname`
 
 ## Siguientes pasos
 
-[`docs/pendientes.md`](docs/pendientes.md): lo que conviene resolver en cada proyecto nuevo según su alcance (migraciones, `BaseEntity`, paginación, Swagger, autenticación, health checks).
+[`docs/pendientes.md`](docs/pendientes.md): lo que conviene resolver en cada proyecto nuevo según su alcance (migraciones, `BaseEntity`, autenticación, health checks).

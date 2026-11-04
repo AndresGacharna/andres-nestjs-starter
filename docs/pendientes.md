@@ -12,9 +12,7 @@
 ## Con los primeros módulos
 
 - [ ] **`BaseEntity` común** en `common/entities/base.entity.ts` con `@CreateDateColumn`, `@UpdateDateColumn` y, si aplica, `@DeleteDateColumn` para borrado lógico.
-- [ ] **Paginación para consultas por `POST`:** `PaginationDto`, `PagedDto<T>` y el filtro base en `common/dto/`, con límites (`@Max`) en `size`, y el resultado tipado como `PaginatedResult<T>` (`{ page, size, count, rows: T[] }`). Acordar el nombre de la ruta (`POST /<recurso>/search`).
-- [ ] **Swagger** (`@nestjs/swagger`) documentando las dos formas de respuesta exitosa (resultado directo en consultas y `{ message, data? }` en acciones) y `ApiErrorResponse`.
-- [ ] **Autenticación y autorización:** guards JWT y de roles con decoradores `@Auth(...)` / `@Roles(...)`.
+- [ ] **Autenticación y autorización:** guard JWT y de roles con un meta-decorador `@Auth(...)` en `auth/decorators/auth.decorator.ts`, como dice la sección *Authorization* de la skill (un `@Auth` por handler, admin explícito, rol placeholder rechazado). Agregar `.addBearerAuth()` al `DocumentBuilder` de `main.ts`.
 - [ ] **Transacciones** (`dataSource.transaction(...)`) para operaciones que escriben varias tablas.
 
 ## Operación y calidad

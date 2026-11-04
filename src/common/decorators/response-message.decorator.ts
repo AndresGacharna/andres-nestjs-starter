@@ -9,7 +9,7 @@ export const RESPONSE_MESSAGE_KEY = 'responseMessage';
  * `<feature>/constants/<feature>.messages.ts`.
  *
  * @example
- * @Post()
+ * @Post('create')
  * @ResponseMessage(CompanyMessages.CREATED)
  * create(@Body() dto: CreateCompanyDto) { ... }
  */
